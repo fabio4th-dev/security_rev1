@@ -1,0 +1,2548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SEGURANÇA MEIO AMBIENTE E QUALIDADE</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #2980b9;
+            --light-color: #ecf0f1;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --gray-color: #95a5a6;
+            --text-color: #2c3e50;
+            --border-color: #bdc3c7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(25deg);
+        }
+        
+        .project-title {
+            font-size: 20px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .project-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-top: 5px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .project-info {
+            display: flex;
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .info-item {
+            text-align: center;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .info-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .tabs-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .tabs-header {
+            display: flex;
+            background-color: var(--light-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 18px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab-button:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .tab-button.active {
+            background-color: white;
+            color: var(--secondary-color);
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--secondary-color);
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            color: var(--secondary-color);
+        }
+        
+        .progress-container {
+            margin-bottom: 18px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.8s ease;
+        }
+        
+        .progress-fill.planned {
+            background-color: var(--secondary-color);
+        }
+        
+        .progress-fill.actual {
+            background-color: var(--success-color);
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            height: 450px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-title i {
+            color: var(--secondary-color);
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .status-completed {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-ontrack {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .status-delayed {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        /* Estilos específicos para a aba HHT */
+        .hht-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+        
+        .hht-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--secondary-color);
+            text-align: center;
+        }
+        
+        .hht-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hht-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .hht-label {
+            font-size: 16px;
+            color: var(--gray-color);
+            margin-bottom: 15px;
+        }
+        
+        .hht-subtitle {
+            font-size: 14px;
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .hht-total {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-top: 10px;
+        }
+        
+        .hht-chart-container {
+            height: 400px;
+            margin-bottom: 30px;
+        }
+        
+        .hht-table-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+        }
+        
+        .hht-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .hht-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .hht-table th:first-child {
+            text-align: left;
+            padding-left: 15px;
+            min-width: 200px;
+        }
+        
+        .hht-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .hht-table td:first-child {
+            text-align: left;
+            padding-left: 15px;
+            font-weight: 500;
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .hht-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .hht-table .current-week {
+            background-color: rgba(52, 152, 219, 0.1);
+            font-weight: 600;
+        }
+        
+        .hht-table .zero-value {
+            color: var(--gray-color);
+        }
+        
+        .hht-table .positive-value {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+        
+        .hht-table .hht-value-cell {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        /* Estilos para a aba da Pirâmide de Frank Bird */
+        .pyramid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .pyramid-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .pyramid-row:hover {
+            transform: scale(1.02);
+        }
+        
+        .pyramid-level {
+            padding: 20px 40px;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+            border-radius: 5px;
+            min-width: 300px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pyramid-label {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .pyramid-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .pyramid-ratio {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .pyramid-row-1 .pyramid-level { background-color: #e74c3c; width: 200px; } /* Fatalidades */
+        .pyramid-row-2 .pyramid-level { background-color: #f39c12; width: 250px; } /* Acidentes graves */
+        .pyramid-row-3 .pyramid-level { background-color: #3498db; width: 300px; } /* Acidentes leves */
+        .pyramid-row-4 .pyramid-level { background-color: #2ecc71; width: 350px; } /* Incidentes */
+        .pyramid-row-5 .pyramid-level { background-color: #9b59b6; width: 400px; } /* Desvios/Não-conformidades */
+        .pyramid-row-6 .pyramid-level { background-color: #34495e; width: 450px; } /* Condições inseguras */
+        
+        .pyramid-explanation {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+        }
+        
+        .pyramid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .pyramid-stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .pyramid-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .pyramid-stat-label {
+            font-size: 16px;
+            color: var(--gray-color);
+        }
+        
+        /* Estilos para a aba de upload */
+        #data-update .upload-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        
+        .upload-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .upload-title i {
+            color: var(--secondary-color);
+        }
+        
+        .upload-description {
+            color: var(--gray-color);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #fafafa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--secondary-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .upload-area.drag-over {
+            border-color: var(--success-color);
+            background-color: rgba(39, 174, 96, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        
+        .upload-subtext {
+            font-size: 14px;
+            color: var(--gray-color);
+            margin-bottom: 20px;
+        }
+        
+        .browse-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .browse-button:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .selected-file {
+            background-color: rgba(39, 174, 96, 0.1);
+            border: 1px solid var(--success-color);
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .file-icon {
+            color: var(--success-color);
+            font-size: 20px;
+        }
+        
+        .file-name {
+            font-weight: 500;
+        }
+        
+        .file-size {
+            color: var(--gray-color);
+            font-size: 13px;
+        }
+        
+        .remove-file {
+            color: var(--danger-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 18px;
+        }
+        
+        .upload-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .upload-button {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .upload-button:hover:not(:disabled) {
+            background-color: #219653;
+        }
+        
+        .upload-button:disabled {
+            background-color: var(--gray-color);
+            cursor: not-allowed;
+        }
+        
+        .clear-button {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .clear-button:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+        
+        .csv-preview {
+            margin-top: 25px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+        
+        .csv-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .csv-table th {
+            background-color: var(--light-color);
+            padding: 10px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .csv-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .csv-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .upload-status {
+            margin-top: 15px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .upload-status.success {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            display: block;
+        }
+        
+        .upload-status.error {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            display: block;
+        }
+        
+        .csv-format {
+            background-color: rgba(52, 152, 219, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .format-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .format-example {
+            font-family: monospace;
+            font-size: 12px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        
+        .download-template {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .download-template:hover {
+            background-color: #1a252f;
+        }
+        
+        /* NOVO: Estilos para upload boxes lado a lado */
+        .upload-boxes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .upload-box {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid var(--secondary-color);
+        }
+        
+        .upload-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--gray-color);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .developer-info {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+        
+        /* Estilos para o botão de atualizar semana */
+        .update-week-button {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .update-week-button:hover {
+            background-color: #e67e22;
+        }
+        
+        /* Ajustes para responsividade */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .project-info {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .tabs-header {
+                flex-direction: column;
+            }
+            
+            .cards-container, .hht-grid, .pyramid-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .upload-actions button {
+                width: 100%;
+            }
+            
+            .hht-table {
+                font-size: 10px;
+            }
+            
+            .hht-table th, .hht-table td {
+                padding: 8px 4px;
+            }
+            
+            .hht-table th:first-child, .hht-table td:first-child {
+                padding-left: 8px;
+                min-width: 150px;
+            }
+            
+            .pyramid-level {
+                min-width: 250px;
+                padding: 15px 30px;
+            }
+            
+            .pyramid-row-1 .pyramid-level { width: 150px; }
+            .pyramid-row-2 .pyramid-level { width: 180px; }
+            .pyramid-row-3 .pyramid-level { width: 210px; }
+            .pyramid-row-4 .pyramid-level { width: 240px; }
+            .pyramid-row-5 .pyramid-level { width: 270px; }
+            .pyramid-row-6 .pyramid-level { width: 300px; }
+            
+            .upload-boxes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .week-selector-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .week-selector-container select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <div style="text-align: center; width: 100%;">
+                    <div class="project-title" style="font-size: 30px; font-weight: bold; text-align: center;">
+                        SEGURANÇA MEIO AMBIENTE E QUALIDADE
+                    </div>
+                    <div class="project-subtitle" style="font-size: 20px; line-height: 1.3; text-align: center;">
+                        <strong>Acompanhamento do Projeto</strong> - <span id="week-range">Semana 12 (30/11 até 07/12)</span>
+                    </div>
+                    
+                    <!-- NOVO: Seletor de Semanas com Botão de Atualizar -->
+                    <div class="week-selector-container" style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <label for="week-selector" style="font-size: 14px; color: white; font-weight: 500;">Selecionar Semana:</label>
+                        <select id="week-selector" style="padding: 8px 15px; border-radius: 5px; border: none; background-color: white; color: var(--primary-color); font-weight: 500; min-width: 200px;">
+                            <option value="1">S.01 (14/09 até 21/09)</option>
+                            <option value="2">S.02 (21/09 até 28/09)</option>
+                            <option value="3">S.03 (28/09 até 05/10)</option>
+                            <option value="4">S.04 (05/10 até 12/10)</option>
+                            <option value="5">S.05 (12/10 até 19/10)</option>
+                            <option value="6">S.06 (19/10 até 26/10)</option>
+                            <option value="7">S.07 (26/10 até 02/11)</option>
+                            <option value="8">S.08 (02/11 até 09/11)</option>
+                            <option value="9">S.09 (09/11 até 16/11)</option>
+                            <option value="10">S.10 (16/11 até 23/11)</option>
+                            <option value="11">S.11 (23/11 até 30/11)</option>
+                            <option value="12" selected>S.12 (30/11 até 07/12)</option>
+                            <option value="13">S.13 (07/12 até 14/12)</option>
+                            <option value="14">S.14 (14/12 até 21/12)</option>
+                            <option value="15">S.15 (21/12 até 28/12)</option>
+                            <option value="16">S.16 (28/12 até 04/01)</option>
+                            <option value="17">S.17 (04/01 até 11/01)</option>
+                        </select>
+                        <button class="update-week-button" onclick="updateSelectedWeek()">
+                            <i class="fas fa-sync-alt"></i> Atualizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px; position: relative; top: -1px;">
+                <!-- Logo FW Company (acima) -->
+                <img src="FW LOGO (remov).png" alt="FW Company Logo" 
+                     style="height: 90px; width: auto;">
+                
+                <!-- Logos Altercon e Delservin (abaixo, na mesma linha) -->
+                <div style="display: flex; align-items: center; gap: 15px; margin-top: -12px;">
+                    <img src="Altercon LOGO.png" alt="Altercon LOGO" style="height: 70px; width: auto;">
+                    <img src="Delservin LOGO.png" alt="Delservin LOGO" style="height: 35px; width: auto;">
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="indicadores-hht">
+                    <i class="fas fa-hard-hat"></i> Indicadores HHT
+                </button>
+                <button class="tab-button" data-tab="evolucao-hht">
+                    <i class="fas fa-chart-line"></i> Evolução HHT
+                </button>
+                <button class="tab-button" data-tab="piramide-bird">
+                    <i class="fas fa-exclamation-triangle"></i> Pirâmide de Bird
+                </button>
+                <button class="tab-button" data-tab="tabela-seguranca">
+                    <i class="fas fa-table"></i> Tabela Segurança
+                </button>
+                <button class="tab-button" data-tab="painel-estatisticas">
+                    <i class="fas fa-chart-bar"></i> Painel Estatísticas
+                </button>
+                <button class="tab-button" data-tab="data-update">
+                    <i class="fas fa-database"></i> Atualizar Dados
+                </button>
+            </div>
+            
+            <!-- Conteúdo das abas -->
+            <div class="tab-content active" id="indicadores-hht">
+                <h2 class="section-title"><i class="fas fa-hard-hat"></i> Indicadores de HHT e Segurança</h2>
+                
+                <div class="hht-grid">
+                    <div class="hht-card">
+                        <div class="hht-label">HHT Semana Atual</div>
+                        <div class="hht-value" id="hht-current">396</div>
+                        <div class="hht-subtitle">Homens-Hora Trabalhados (x1000)</div>
+                    </div>
+                    
+                    <div class="hht-card">
+                        <div class="hht-label">HHT Acumulado</div>
+                        <div class="hht-value" id="hht-accumulated">2,948</div>
+                        <div class="hht-subtitle">Total do Projeto (x1000)</div>
+                    </div>
+                    
+                    <div class="hht-card">
+                        <div class="hht-label">Acidentes com Afastamento</div>
+                        <div class="hht-value" id="caf-count">0</div>
+                        <div class="hht-subtitle">CAF - Total do Projeto</div>
+                    </div>
+                    
+                    <div class="hht-card">
+                        <div class="hht-label">Dias sem CAF</div>
+                        <div class="hht-value" id="days-without-caf">0</div>
+                        <div class="hht-subtitle">Dias sem acidentes com afastamento</div>
+                    </div>
+                </div>
+                
+                <div class="hht-grid" style="margin-top: 20px;">
+                    <div class="hht-card">
+                        <div class="hht-label">Acidentes sem Afastamento</div>
+                        <div class="hht-value" id="saf-count">0</div>
+                        <div class="hht-subtitle">SAF - Total do Projeto</div>
+                    </div>
+                    
+                    <div class="hht-card">
+                        <div class="hht-label">Ocorrências Simples (OSA)</div>
+                        <div class="hht-value" id="osa-count">0</div>
+                        <div class="hht-subtitle">Total do Projeto</div>
+                    </div>
+                    
+                    <div class="hht-card">
+                        <div class="hht-label">Ocorrências Ambientais</div>
+                        <div class="hht-value" id="env-occurrence">0</div>
+                        <div class="hht-subtitle">Total do Projeto</div>
+                    </div>
+                    
+                    <div class="hht-card">
+                        <div class="hht-label">Desvios Registrados</div>
+                        <div class="hht-value" id="deviations-count">0</div>
+                        <div class="hht-subtitle">Total do Projeto</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="evolucao-hht">
+                <h2 class="section-title"><i class="fas fa-chart-line"></i> Evolução do HHT Semanal (x1000)</h2>
+                
+                <div class="chart-container">
+                    <div class="chart-title"><i class="fas fa-chart-line"></i> Evolução do HHT Semanal (x1000)</div>
+                    <div class="hht-chart-container">
+                        <canvas id="hhtWeeklyChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container" style="margin-top: 20px; height: 400px;">
+                    <div class="chart-title"><i class="fas fa-chart-bar"></i> Comparativo MO Previsto vs Real</div>
+                    <div style="height: 350px;">
+                        <canvas id="moComparisonChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 20px;">
+                    <div class="card-title"><i class="fas fa-info-circle"></i> Análise da Evolução</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div>
+                            <div style="font-weight: 600; color: var(--primary-color); margin-bottom: 5px;">Média Semanal</div>
+                            <div style="font-size: 24px; font-weight: 700; color: var(--secondary-color);" id="hht-weekly-average">173.4</div>
+                            <div style="font-size: 14px; color: var(--gray-color);">Homens-Hora (x1000)</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--primary-color); margin-bottom: 5px;">Pico Semanal</div>
+                            <div style="font-size: 24px; font-weight: 700; color: var(--warning-color);" id="hht-weekly-peak">396</div>
+                            <div style="font-size: 14px; color: var(--gray-color);">Semana 7</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--primary-color); margin-bottom: 5px;">Crescimento</div>
+                            <div style="font-size: 24px; font-weight: 700; color: var(--success-color);" id="hht-growth">+200%</div>
+                            <div style="font-size: 14px; color: var(--gray-color);">Desde a semana 1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="piramide-bird">
+                <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i> Pirâmide de Frank Bird</h2>
+                
+                <div class="pyramid-container">
+                    <!-- Nível 6: Condições Inseguras / Atos Inseguros -->
+                    <div class="pyramid-row pyramid-row-6" onclick="showPyramidDetails(6)">
+                        <div class="pyramid-level">
+                            <div class="pyramid-label">Condições Inseguras / Atos Inseguros</div>
+                            <div class="pyramid-value" id="pyramid-unsafe">0</div>
+                            <div class="pyramid-ratio">1:600</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nível 5: Desvios / Não-conformidades -->
+                    <div class="pyramid-row pyramid-row-5" onclick="showPyramidDetails(5)">
+                        <div class="pyramid-level">
+                            <div class="pyramid-label">Desvios / Não-conformidades</div>
+                            <div class="pyramid-value" id="pyramid-deviations">0</div>
+                            <div class="pyramid-ratio">1:30</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nível 4: Incidentes / Quase Acidentes -->
+                    <div class="pyramid-row pyramid-row-4" onclick="showPyramidDetails(4)">
+                        <div class="pyramid-level">
+                            <div class="pyramid-label">Incidentes / Quase Acidentes</div>
+                            <div class="pyramid-value" id="pyramid-incidents">0</div>
+                            <div class="pyramid-ratio">1:10</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nível 3: Acidentes Leves (SAF) -->
+                    <div class="pyramid-row pyramid-row-3" onclick="showPyramidDetails(3)">
+                        <div class="pyramid-level">
+                            <div class="pyramid-label">Acidentes Leves (SAF)</div>
+                            <div class="pyramid-value" id="pyramid-saf">0</div>
+                            <div class="pyramid-ratio">1:4</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nível 2: Acidentes Graves (CAF) -->
+                    <div class="pyramid-row pyramid-row-2" onclick="showPyramidDetails(2)">
+                        <div class="pyramid-level">
+                            <div class="pyramid-label">Acidentes Graves (CAF)</div>
+                            <div class="pyramid-value" id="pyramid-caf">0</div>
+                            <div class="pyramid-ratio">1:1</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nível 1: Fatalidades -->
+                    <div class="pyramid-row pyramid-row-1" onclick="showPyramidDetails(1)">
+                        <div class="pyramid-level">
+                            <div class="pyramid-label">Fatalidades</div>
+                            <div class="pyramid-value" id="pyramid-fatalities">0</div>
+                            <div class="pyramid-ratio">1:600</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pyramid-explanation">
+                    <div class="card-title"><i class="fas fa-info-circle"></i> Teoria da Pirâmide de Frank Bird</div>
+                    <p>A Pirâmide de Frank Bird, também conhecida como Pirâmide de Heinrich ou Pirâmide de Acidentes, demonstra a relação entre diferentes tipos de eventos de segurança:</p>
+                    <ul style="margin-top: 15px; padding-left: 20px;">
+                        <li><strong>Para cada 1 fatalidade</strong>, ocorrem aproximadamente <strong>10 acidentes graves</strong></li>
+                        <li><strong>Para cada 1 acidente grave</strong>, ocorrem aproximadamente <strong>30 acidentes leves</strong></li>
+                        <li><strong>Para cada 1 acidente leve</strong>, ocorrem aproximadamente <strong>600 incidentes/quase acidentes</strong></li>
+                        <li><strong>Para cada 1 incidente</strong>, existem aproximadamente <strong>30 desvios/não-conformidades</strong></li>
+                        <li><strong>Para cada 1 desvio</strong>, existem aproximadamente <strong>600 condições/atos inseguros</strong></li>
+                    </ul>
+                    <p style="margin-top: 15px; font-weight: 600; color: var(--primary-color);">
+                        Foco na prevenção: Atuando nas bases da pirâmide (condições inseguras e desvios), podemos prevenir os eventos mais graves no topo.
+                    </p>
+                </div>
+                
+                <div class="pyramid-stats">
+                    <div class="pyramid-stat-card">
+                        <div class="pyramid-stat-value" id="pyramid-total-base">0</div>
+                        <div class="pyramid-stat-label">Total Base (Desvios + Condições)</div>
+                    </div>
+                    
+                    <div class="pyramid-stat-card">
+                        <div class="pyramid-stat-value" id="pyramid-total-middle">0</div>
+                        <div class="pyramid-stat-label">Total Médio (Incidentes + SAF)</div>
+                    </div>
+                    
+                    <div class="pyramid-stat-card">
+                        <div class="pyramid-stat-value" id="pyramid-total-top">0</div>
+                        <div class="pyramid-stat-label">Total Topo (CAF + Fatalidades)</div>
+                    </div>
+                    
+                    <div class="pyramid-stat-card">
+                        <div class="pyramid-stat-value" id="pyramid-ratio-actual">0:0</div>
+                        <div class="pyramid-stat-label">Razão Atual (Base:Topo)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tabela-seguranca">
+                <h2 class="section-title"><i class="fas fa-table"></i> Tabela de Indicadores de Segurança</h2>
+                
+                <div class="hht-table-container">
+                    <table class="hht-table">
+                        <thead>
+                            <tr>
+                                <th>Indicador</th>
+                                <th>Semana Atual</th>
+                                <th>Acumulado</th>
+                                <th>S.01<br>14/09</th>
+                                <th>S.02<br>21/09</th>
+                                <th>S.03<br>28/09</th>
+                                <th>S.04<br>05/10</th>
+                                <th>S.05<br>12/10</th>
+                                <th>S.06<br>19/10</th>
+                                <th>S.07<br>26/10</th>
+                                <th>S.08<br>02/11</th>
+                                <th>S.09<br>09/11</th>
+                                <th>S.10<br>16/11</th>
+                                <th>S.11<br>23/11</th>
+                                <th>S.12<br>30/11</th>
+                                <th>S.13<br>07/12</th>
+                                <th>S.14<br>14/12</th>
+                                <th>S.15<br>21/12</th>
+                                <th>S.16<br>28/12</th>
+                                <th>S.17<br>04/01</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hht-table-body">
+                            <!-- Os dados serão inseridos via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-title"><i class="fas fa-file-export"></i> Exportar Dados</div>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="browse-button" onclick="exportData('csv')">
+                            <i class="fas fa-file-csv"></i> Exportar CSV
+                        </button>
+                        <button class="browse-button" onclick="exportData('excel')" style="background-color: var(--success-color);">
+                            <i class="fas fa-file-excel"></i> Exportar Excel
+                        </button>
+                        <button class="browse-button" onclick="window.print()" style="background-color: var(--primary-color);">
+                            <i class="fas fa-print"></i> Imprimir Tabela
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="painel-estatisticas">
+                <h2 class="section-title"><i class="fas fa-chart-bar"></i> Painel com Taxas de Frequência e Estatísticas de Segurança</h2>
+                
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-exclamation-triangle"></i> Taxas de Frequência</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Taxa de Frequência (CAF e SAF)</span>
+                                <span id="freq-rate-total">0,00</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill planned" id="freq-rate-total-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Taxa de Frequência CAF</span>
+                                <span id="freq-rate-caf">0,00</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill planned" id="freq-rate-caf-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Taxa de Frequência SAF</span>
+                                <span id="freq-rate-saf">0,00</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill planned" id="freq-rate-saf-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-shield-alt"></i> Estatísticas de Segurança</div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Acidentes sem Afastamento (SAF)</span>
+                                <span id="saf-count-panel">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Ocorrências Simples (OSA)</span>
+                                <span id="osa-count-panel">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Dias sem SAF</span>
+                                <span id="days-without-saf-panel">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Ocorrências Ambientais</span>
+                                <span id="env-occurrence-panel">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Desvios Registrados</span>
+                                <span id="deviations-count-panel">0</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <span class="status-badge status-completed"><i class="fas fa-check-circle"></i> Sem acidentes registrados</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-calendar-alt"></i> Dias sem Incidentes</div>
+                        <div style="text-align: center; padding: 20px 0;">
+                            <div style="font-size: 48px; font-weight: 700; color: var(--success-color);" id="days-without-incidents">0</div>
+                            <div style="font-size: 16px; color: var(--gray-color); margin-top: 10px;">Dias consecutivos sem incidentes</div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Último CAF</span>
+                                <span style="color: var(--success-color); font-weight: 600;">Nunca</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Último SAF</span>
+                                <span style="color: var(--success-color); font-weight: 600;">Nunca</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Última OSA</span>
+                                <span style="color: var(--success-color); font-weight: 600;">Nunca</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container" style="margin-top: 20px; height: 400px;">
+                    <div class="chart-title"><i class="fas fa-chart-pie"></i> Distribuição de Incidentes por Tipo</div>
+                    <canvas id="incidentsDistributionChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="data-update">
+                <h2 class="section-title"><i class="fas fa-database"></i> Atualização de Dados via CSV</h2>
+                
+                <!-- NOVO: Container com boxes lado a lado -->
+                <div class="upload-boxes-container">
+                    <!-- Box para Histograma -->
+                    <div class="upload-box">
+                        <div class="upload-title"><i class="fas fa-chart-bar"></i> Dados do Histograma (MO Previsto vs Real)</div>
+                        <div class="upload-description">
+                            Faça upload do arquivo CSV "Histograma_FW_*.csv" para atualizar os dados de MO Previsto x Real.
+                        </div>
+                        
+                        <div class="csv-format">
+                            <div class="format-title">Formato Esperado:</div>
+                            <div>CSV com cabeçalhos: Disciplina,Período,,datas...</div>
+                            <div class="format-example">
+                                Disciplina,Período,,14/09/2025,21/09/2025,28/09/2025,05/10/2025...<br>
+                                MO Total,Previsto,,3,1,1,1,1,7,8,10,10,10,9,8,6,6,6,3,6,3<br>
+                                MO Total,Real,,3,1,1,1,2,2,6,6,6,6,6,6,6,0,0,0,0,0
+                            </div>
+                            <a href="#" class="download-template" onclick="downloadHistogramTemplate()">
+                                <i class="fas fa-download"></i> Baixar Template Histograma
+                            </a>
+                        </div>
+                        
+                        <div class="upload-area" id="uploadAreaHistogram">
+                            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <div class="upload-text">Arraste e solte seu arquivo CSV aqui</div>
+                            <div class="upload-subtext">ou</div>
+                            <button class="browse-button" onclick="document.getElementById('fileInputHistogram').click()">Procurar Arquivo</button>
+                            <input type="file" id="fileInputHistogram" class="file-input" accept=".csv">
+                        </div>
+                        
+                        <div id="selectedFileHistogram" class="selected-file" style="display: none;">
+                            <div class="file-info">
+                                <i class="fas fa-file-csv file-icon"></i>
+                                <div>
+                                    <div class="file-name" id="fileNameHistogram"></div>
+                                    <div class="file-size" id="fileSizeHistogram"></div>
+                                </div>
+                            </div>
+                            <button class="remove-file" onclick="removeFile('Histogram')"><i class="fas fa-times"></i></button>
+                        </div>
+                        
+                        <div id="csvPreviewHistogram" class="csv-preview" style="display: none;"></div>
+                        
+                        <div id="uploadStatusHistogram" class="upload-status"></div>
+                        
+                        <div class="upload-actions">
+                            <button class="clear-button" onclick="clearSection('Histogram')">Limpar</button>
+                            <button class="upload-button" id="uploadButtonHistogram" onclick="uploadCSV('Histogram')" disabled>Enviar Dados</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Box para Segurança/HHT -->
+                    <div class="upload-box">
+                        <div class="upload-title"><i class="fas fa-hard-hat"></i> Dados de HHT / Segurança</div>
+                        <div class="upload-description">
+                            Faça upload do arquivo CSV "Segurança_MeioAmbiente_*.csv" para atualizar os dados de HHT e indicadores de segurança.
+                        </div>
+                        
+                        <div class="csv-format">
+                            <div class="format-title">Formato Esperado:</div>
+                            <div>CSV com cabeçalhos: Descritivo;Semana Atual;Acumulado;datas...</div>
+                            <div class="format-example">
+                                Descritivo;Semana Atual;Acumulado;14/09/2025;21/09/2025;28/09/2025;05/10/2025...<br>
+                                Hht(x1000);396;2948;132;44;44;44;220;88;396;396;396;396;396;396;0;0;0;0;0;0<br>
+                                CAF - Acidentes Com Afastamentos;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+                            </div>
+                            <a href="#" class="download-template" onclick="downloadTemplate('hht')">
+                                <i class="fas fa-download"></i> Baixar Template
+                            </a>
+                        </div>
+                        
+                        <div class="upload-area" id="uploadAreaSecurity">
+                            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <div class="upload-text">Arraste e solte seu arquivo CSV aqui</div>
+                            <div class="upload-subtext">ou</div>
+                            <button class="browse-button" onclick="document.getElementById('fileInputSecurity').click()">Procurar Arquivo</button>
+                            <input type="file" id="fileInputSecurity" class="file-input" accept=".csv">
+                        </div>
+                        
+                        <div id="selectedFileSecurity" class="selected-file" style="display: none;">
+                            <div class="file-info">
+                                <i class="fas fa-file-csv file-icon"></i>
+                                <div>
+                                    <div class="file-name" id="fileNameSecurity"></div>
+                                    <div class="file-size" id="fileSizeSecurity"></div>
+                                </div>
+                            </div>
+                            <button class="remove-file" onclick="removeFile('Security')"><i class="fas fa-times"></i></button>
+                        </div>
+                        
+                        <div id="csvPreviewSecurity" class="csv-preview" style="display: none;"></div>
+                        
+                        <div id="uploadStatusSecurity" class="upload-status"></div>
+                        
+                        <div class="upload-actions">
+                            <button class="clear-button" onclick="clearSection('Security')">Limpar</button>
+                            <button class="upload-button" id="uploadButtonSecurity" onclick="uploadCSV('Security')" disabled>Enviar Dados</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-title"><i class="fas fa-sync-alt"></i> Atualizar Todos os Dados</div>
+                    <div style="margin-bottom: 20px;">
+                        Clique no botão abaixo para atualizar todos os gráficos e dados do dashboard com as informações dos arquivos CSV enviados.
+                    </div>
+                    <button class="upload-button" style="width: 100%; padding: 15px;" onclick="updateAllCharts()">
+                        <i class="fas fa-sync-alt"></i> Atualizar Todos os Gráficos
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-info">
+            <p>Dashboard de acompanhamento de Segurança | Atualizado em: 03/12/2025</p>
+            <p class="developer-info">Desenvolvido e editado por Fábio Mendes Rodrigues, Planejador da F.W. Company</p>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais para armazenar os gráficos e dados
+        let hhtWeeklyChart, incidentsDistributionChart, moComparisonChart;
+        let csvData = {
+            hht: null,
+            histogram: null
+        };
+
+        // Configuração das semanas
+        const weekConfig = {
+            1: { label: "Semana 01", range: "14/09 até 21/09", index: 0 },
+            2: { label: "Semana 02", range: "21/09 até 28/09", index: 1 },
+            3: { label: "Semana 03", range: "28/09 até 05/10", index: 2 },
+            4: { label: "Semana 04", range: "05/10 até 12/10", index: 3 },
+            5: { label: "Semana 05", range: "12/10 até 19/10", index: 4 },
+            6: { label: "Semana 06", range: "19/10 até 26/10", index: 5 },
+            7: { label: "Semana 07", range: "26/10 até 02/11", index: 6 },
+            8: { label: "Semana 08", range: "02/11 até 09/11", index: 7 },
+            9: { label: "Semana 09", range: "09/11 até 16/11", index: 8 },
+            10: { label: "Semana 10", range: "16/11 até 23/11", index: 9 },
+            11: { label: "Semana 11", range: "23/11 até 30/11", index: 10 },
+            12: { label: "Semana 12", range: "30/11 até 07/12", index: 11 },
+            13: { label: "Semana 13", range: "07/12 até 14/12", index: 12 },
+            14: { label: "Semana 14", range: "14/12 até 21/12", index: 13 },
+            15: { label: "Semana 15", range: "21/12 até 28/12", index: 14 },
+            16: { label: "Semana 16", range: "28/12 até 04/01", index: 15 },
+            17: { label: "Semana 17", range: "04/01 até 11/01", index: 16 }
+        };
+
+        // Data inicial (semana 12 selecionada)
+        let selectedWeek = 12;
+
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Inicializar eventos de upload
+            initializeUploadEvents('Histogram');
+            initializeUploadEvents('Security');
+            
+            // Initialize charts
+            initializeCharts();
+            
+            // Carregar dados iniciais do HHT
+            loadInitialHHTData();
+            
+            // Carregar dados iniciais do histograma
+            loadInitialHistogramData();
+            
+            // Inicializar dados da pirâmide
+            updatePyramidData();
+            
+            // Atualizar display inicial da semana
+            updateWeekDisplay();
+        });
+        
+        // Função para atualizar a semana selecionada
+        function updateSelectedWeek() {
+            const selector = document.getElementById('week-selector');
+            selectedWeek = parseInt(selector.value);
+            updateWeekDisplay();
+            updateChartsForSelectedWeek();
+            updateTableForSelectedWeek();
+        }
+        
+        function updateWeekDisplay() {
+            const weekInfo = weekConfig[selectedWeek];
+            document.getElementById('week-range').textContent = `${weekInfo.label} (${weekInfo.range})`;
+        }
+        
+        function updateChartsForSelectedWeek() {
+            // Atualizar o gráfico HHT para destacar a semana selecionada
+            if (hhtWeeklyChart) {
+                // Resetar todas as barras para cor padrão
+                hhtWeeklyChart.data.datasets[0].backgroundColor = hhtWeeklyChart.data.labels.map((_, index) => {
+                    return index === weekConfig[selectedWeek].index ? '#e74c3c' : '#3498db';
+                });
+                hhtWeeklyChart.update();
+            }
+            
+            // Atualizar gráfico de comparação MO
+            if (moComparisonChart) {
+                moComparisonChart.data.datasets[0].backgroundColor = moComparisonChart.data.labels.map((_, index) => {
+                    return index === weekConfig[selectedWeek].index ? '#e74c3c' : '#3498db';
+                });
+                moComparisonChart.data.datasets[1].backgroundColor = moComparisonChart.data.labels.map((_, index) => {
+                    return index === weekConfig[selectedWeek].index ? '#d35400' : '#2ecc71';
+                });
+                moComparisonChart.update();
+            }
+        }
+        
+        function updateTableForSelectedWeek() {
+            // Atualizar a classe da semana atual na tabela
+            const tableRows = document.querySelectorAll('.hht-table tr');
+            
+            // Primeiro remover a classe current-week de todas as células
+            document.querySelectorAll('.hht-table .current-week').forEach(cell => {
+                cell.classList.remove('current-week');
+            });
+            
+            // Adicionar a classe current-week às células da semana selecionada
+            // A semana selecionada está na posição (weekConfig[selectedWeek].index + 3) na tabela
+            const weekColumnIndex = weekConfig[selectedWeek].index + 3;
+            
+            tableRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > weekColumnIndex) {
+                    cells[weekColumnIndex].classList.add('current-week');
+                }
+            });
+        }
+        
+        function initializeUploadEvents(type) {
+            const uploadArea = document.getElementById(`uploadArea${type}`);
+            const fileInput = document.getElementById(`fileInput${type}`);
+            const uploadButton = document.getElementById(`uploadButton${type}`);
+            
+            // Evento de clique na área de upload
+            uploadArea.addEventListener('click', function(e) {
+                if (e.target !== this && !e.target.classList.contains('browse-button')) {
+                    return;
+                }
+                fileInput.click();
+            });
+            
+            // Evento de arrastar sobre a área
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('drag-over');
+            });
+            
+            // Evento de sair da área
+            uploadArea.addEventListener('dragleave', function() {
+                this.classList.remove('drag-over');
+            });
+            
+            // Evento de soltar arquivo
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                
+                if (e.dataTransfer.files.length) {
+                    const file = e.dataTransfer.files[0];
+                    handleFileSelect(file, type);
+                }
+            });
+            
+            // Evento de seleção de arquivo via input
+            fileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    const file = this.files[0];
+                    handleFileSelect(file, type);
+                }
+            });
+            
+            // Evento de clique no botão de upload
+            uploadButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                uploadCSV(type);
+            });
+        }
+        
+        function loadInitialHHTData() {
+            // Dados iniciais do CSV fornecido (Segurança_MeioAmbiente)
+            const hhtData = {
+                'Hht(x1000)': {
+                    'Semana Atual': '396',
+                    'Acumulado': '2948',
+                    'weekly': ['132', '44', '44', '44', '220', '88', '396', '396', '396', '396', '396', '396', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'CAF - Acidentes Com Afastamentos': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'SAF - Acidentes Sem Afastamentos': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'OSA - Ocorrência de Simples Atendimento': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'Dias sem CAF': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'Dias sem SAF': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'Ocorrência Ambiental': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'Taxa de Freq. (CAF e SAF)': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'Taxa de Freq. CAF': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'Taxa de Freq. SAF': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                },
+                'Desvios': {
+                    'Semana Atual': '0',
+                    'Acumulado': '0',
+                    'weekly': ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                }
+            };
+            
+            csvData.hht = hhtData;
+            updateAllDataFromCSV(hhtData);
+        }
+        
+        function loadInitialHistogramData() {
+            // Dados iniciais do histograma (Histograma_FW)
+            const histogramData = {
+                'MO Total': {
+                    'Previsto': ['3', '1', '1', '1', '1', '7', '8', '10', '10', '10', '9', '8', '6', '6', '6', '3', '6', '3'],
+                    'Real': ['3', '1', '1', '1', '2', '2', '6', '6', '6', '6', '6', '6', '6', '0', '0', '0', '0', '0']
+                },
+                'MOI': {
+                    'Previsto': ['3', '1', '1', '1', '1', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '1', '4', '1'],
+                    'Real': ['3', '1', '1', '1', '1', '1', '3', '3', '3', '3', '3', '3', '3', '0', '0', '0', '0', '0']
+                }
+            };
+            
+            csvData.histogram = histogramData;
+            updateMOComparisonChart(histogramData);
+        }
+        
+        function updateAllDataFromCSV(hhtData) {
+            if (!hhtData) return;
+            
+            // Atualizar valores principais
+            if (hhtData['Hht(x1000)']) {
+                document.getElementById('hht-current').textContent = hhtData['Hht(x1000)']['Semana Atual'];
+                document.getElementById('hht-accumulated').textContent = hhtData['Hht(x1000)']['Acumulado'];
+            }
+            
+            if (hhtData['CAF - Acidentes Com Afastamentos']) {
+                document.getElementById('caf-count').textContent = hhtData['CAF - Acidentes Com Afastamentos']['Acumulado'];
+                document.getElementById('days-without-caf').textContent = hhtData['Dias sem CAF'] ? hhtData['Dias sem CAF']['Semana Atual'] : '0';
+            }
+            
+            if (hhtData['SAF - Acidentes Sem Afastamentos']) {
+                document.getElementById('saf-count').textContent = hhtData['SAF - Acidentes Sem Afastamentos']['Acumulado'];
+                document.getElementById('saf-count-panel').textContent = hhtData['SAF - Acidentes Sem Afastamentos']['Acumulado'];
+            }
+            
+            if (hhtData['Dias sem SAF']) {
+                document.getElementById('days-without-saf-panel').textContent = hhtData['Dias sem SAF']['Semana Atual'];
+                // Calcular dias sem incidentes (máximo entre dias sem CAF e SAF)
+                const daysWithoutCAF = parseInt(hhtData['Dias sem CAF'] ? hhtData['Dias sem CAF']['Semana Atual'] : '0');
+                const daysWithoutSAF = parseInt(hhtData['Dias sem SAF'] ? hhtData['Dias sem SAF']['Semana Atual'] : '0');
+                document.getElementById('days-without-incidents').textContent = Math.max(daysWithoutCAF, daysWithoutSAF);
+            }
+            
+            if (hhtData['OSA - Ocorrência de Simples Atendimento']) {
+                document.getElementById('osa-count').textContent = hhtData['OSA - Ocorrência de Simples Atendimento']['Acumulado'];
+                document.getElementById('osa-count-panel').textContent = hhtData['OSA - Ocorrência de Simples Atendimento']['Acumulado'];
+            }
+            
+            if (hhtData['Ocorrência Ambiental']) {
+                document.getElementById('env-occurrence').textContent = hhtData['Ocorrência Ambiental']['Acumulado'];
+                document.getElementById('env-occurrence-panel').textContent = hhtData['Ocorrência Ambiental']['Acumulado'];
+            }
+            
+            if (hhtData['Desvios']) {
+                document.getElementById('deviations-count').textContent = hhtData['Desvios']['Acumulado'];
+                document.getElementById('deviations-count-panel').textContent = hhtData['Desvios']['Acumulado'];
+            }
+            
+            // Atualizar taxas de frequência
+            if (hhtData['Taxa de Freq. (CAF e SAF)']) {
+                document.getElementById('freq-rate-total').textContent = hhtData['Taxa de Freq. (CAF e SAF)']['Semana Atual'];
+                updateProgressBar('freq-rate-total-bar', hhtData['Taxa de Freq. (CAF e SAF)']['Semana Atual']);
+            }
+            
+            if (hhtData['Taxa de Freq. CAF']) {
+                document.getElementById('freq-rate-caf').textContent = hhtData['Taxa de Freq. CAF']['Semana Atual'];
+                updateProgressBar('freq-rate-caf-bar', hhtData['Taxa de Freq. CAF']['Semana Atual']);
+            }
+            
+            if (hhtData['Taxa de Freq. SAF']) {
+                document.getElementById('freq-rate-saf').textContent = hhtData['Taxa de Freq. SAF']['Semana Atual'];
+                updateProgressBar('freq-rate-saf-bar', hhtData['Taxa de Freq. SAF']['Semana Atual']);
+            }
+            
+            // Atualizar análises do HHT
+            if (hhtData['Hht(x1000)'] && hhtData['Hht(x1000)']['weekly']) {
+                const weeklyData = hhtData['Hht(x1000)']['weekly'].slice(0, 12).map(val => parseFloat(val) || 0);
+                const sum = weeklyData.reduce((a, b) => a + b, 0);
+                const average = sum / weeklyData.length;
+                const max = Math.max(...weeklyData);
+                const maxIndex = weeklyData.indexOf(max);
+                const growth = weeklyData.length > 1 ? ((weeklyData[weeklyData.length-1] - weeklyData[0]) / weeklyData[0] * 100).toFixed(1) : 0;
+                
+                document.getElementById('hht-weekly-average').textContent = average.toFixed(1);
+                document.getElementById('hht-weekly-peak').textContent = max;
+                document.getElementById('hht-growth').textContent = `+${growth}%`;
+            }
+            
+            // Atualizar tabela
+            updateHHTTable(hhtData);
+            
+            // Atualizar gráficos
+            updateHHTChart(hhtData);
+            updateIncidentsChart(hhtData);
+            
+            // Atualizar pirâmide
+            updatePyramidData(hhtData);
+            
+            // Atualizar para a semana selecionada
+            updateChartsForSelectedWeek();
+            updateTableForSelectedWeek();
+        }
+        
+        function updatePyramidData(hhtData = null) {
+            // Usar dados do CSV se disponíveis, caso contrário usar valores padrão
+            let caf = 0;
+            let saf = 0;
+            let osa = 0;
+            let desvios = 0;
+            
+            if (hhtData) {
+                caf = parseInt(hhtData['CAF - Acidentes Com Afastamentos'] ? hhtData['CAF - Acidentes Com Afastamentos']['Acumulado'] : 0);
+                saf = parseInt(hhtData['SAF - Acidentes Sem Afastamentos'] ? hhtData['SAF - Acidentes Sem Afastamentos']['Acumulado'] : 0);
+                osa = parseInt(hhtData['OSA - Ocorrência de Simples Atendimento'] ? hhtData['OSA - Ocorrência de Simples Atendimento']['Acumulado'] : 0);
+                desvios = parseInt(hhtData['Desvios'] ? hhtData['Desvios']['Acumulado'] : 0);
+            }
+            
+            // Fatalidades (assumindo 0 - nenhum dado específico)
+            const fatalidades = 0;
+            
+            // Calcular valores teóricos da pirâmide
+            // Baseado na teoria de Frank Bird:
+            // - Para cada 1 fatalidade: 10 CAF, 30 SAF, 600 incidentes, 30 desvios por incidente, 600 condições inseguras por desvio
+            const incidentes = osa; // Considerando OSA como incidentes/quase acidentes
+            const condicoesInseguras = desvios * 20; // Estimativa: para cada desvio, 20 condições/atos inseguros
+            
+            // Atualizar valores na pirâmide
+            document.getElementById('pyramid-fatalities').textContent = fatalidades;
+            document.getElementById('pyramid-caf').textContent = caf;
+            document.getElementById('pyramid-saf').textContent = saf;
+            document.getElementById('pyramid-incidents').textContent = incidentes;
+            document.getElementById('pyramid-deviations').textContent = desvios;
+            document.getElementById('pyramid-unsafe').textContent = condicoesInseguras;
+            
+            // Calcular totais
+            const totalBase = condicoesInseguras + desvios;
+            const totalMiddle = incidentes + saf;
+            const totalTop = caf + fatalidades;
+            
+            // Calcular razão
+            const ratioBaseTop = totalBase > 0 ? (totalBase / totalTop).toFixed(0) : 0;
+            
+            // Atualizar estatísticas
+            document.getElementById('pyramid-total-base').textContent = totalBase.toLocaleString();
+            document.getElementById('pyramid-total-middle').textContent = totalMiddle.toLocaleString();
+            document.getElementById('pyramid-total-top').textContent = totalTop.toLocaleString();
+            document.getElementById('pyramid-ratio-actual').textContent = `${ratioBaseTop}:1`;
+            
+            // Atualizar status
+            updatePyramidStatus(caf, saf, incidentes, desvios);
+        }
+        
+        function updatePyramidStatus(caf, saf, incidentes, desvios) {
+            // Esta função pode ser expandida para fornecer análises mais detalhadas
+            const statusDiv = document.querySelector('#piramide-bird .status-badge');
+            if (statusDiv) {
+                if (caf === 0 && saf === 0 && incidentes === 0) {
+                    statusDiv.className = 'status-badge status-completed';
+                    statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Pirâmide ideal - sem eventos registrados';
+                } else if (caf === 0 && saf === 0) {
+                    statusDiv.className = 'status-badge status-ontrack';
+                    statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Boa gestão - incidentes na base controlados';
+                } else if (caf === 0) {
+                    statusDiv.className = 'status-badge status-warning';
+                    statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Atenção - SAFs registrados';
+                } else {
+                    statusDiv.className = 'status-badge status-delayed';
+                    statusDiv.innerHTML = '<i class="fas fa-times-circle"></i> Crítico - CAFs registrados';
+                }
+            }
+        }
+        
+        function showPyramidDetails(level) {
+            const levels = [
+                { name: "Fatalidades", color: "#e74c3c", desc: "Acidentes fatais com perda de vida" },
+                { name: "Acidentes Graves (CAF)", color: "#f39c12", desc: "Acidentes com afastamento do trabalho" },
+                { name: "Acidentes Leves (SAF)", color: "#3498db", desc: "Acidentes sem afastamento do trabalho" },
+                { name: "Incidentes / Quase Acidentes", color: "#2ecc71", desc: "Eventos que não resultaram em lesão, mas poderiam" },
+                { name: "Desvios / Não-conformidades", color: "#9b59b6", desc: "Condições ou comportamentos fora do padrão seguro" },
+                { name: "Condições Inseguras / Atos Inseguros", color: "#34495e", desc: "Situações ou ações que podem levar a incidentes" }
+            ];
+            
+            const levelIndex = 6 - level; // Inverter porque a pirâmide é desenhada de baixo para cima
+            const levelData = levels[levelIndex];
+            
+            alert(`Nível: ${levelData.name}\n\nDescrição: ${levelData.desc}\n\nA teoria da Pirâmide de Frank Bird sugere que para prevenir eventos no topo (fatalidades), devemos focar na prevenção na base (condições inseguras).`);
+        }
+        
+        function updateProgressBar(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const numValue = parseFloat(value) || 0;
+                // Normalizar para máximo de 100%
+                const normalizedValue = Math.min(numValue, 100);
+                element.style.width = `${normalizedValue}%`;
+                
+                // Mudar cor baseado no valor
+                if (numValue === 0) {
+                    element.style.backgroundColor = '#27ae60'; // Verde para 0
+                } else if (numValue <= 5) {
+                    element.style.backgroundColor = '#f39c12'; // Amarelo para baixo
+                } else {
+                    element.style.backgroundColor = '#e74c3c'; // Vermelho para alto
+                }
+            }
+        }
+        
+        function updateHHTTable(hhtData) {
+            const tableBody = document.getElementById('hht-table-body');
+            if (!tableBody) return;
+            
+            // Limpar tabela
+            tableBody.innerHTML = '';
+            
+            // Definir a ordem das linhas
+            const rowOrder = [
+                'Hht(x1000)',
+                'CAF - Acidentes Com Afastamentos',
+                'SAF - Acidentes Sem Afastamentos',
+                'OSA - Ocorrência de Simples Atendimento',
+                'Dias sem CAF',
+                'Dias sem SAF',
+                'Ocorrência Ambiental',
+                'Taxa de Freq. (CAF e SAF)',
+                'Taxa de Freq. CAF',
+                'Taxa de Freq. SAF',
+                'Desvios'
+            ];
+            
+            // Adicionar linhas na ordem definida
+            rowOrder.forEach(rowKey => {
+                if (hhtData[rowKey]) {
+                    const rowData = hhtData[rowKey];
+                    const row = document.createElement('tr');
+                    
+                    // Célula do indicador
+                    const indicatorCell = document.createElement('td');
+                    indicatorCell.textContent = rowKey;
+                    row.appendChild(indicatorCell);
+                    
+                    // Célula da semana atual
+                    const currentCell = document.createElement('td');
+                    currentCell.textContent = rowData['Semana Atual'];
+                    currentCell.className = 'hht-value-cell';
+                    row.appendChild(currentCell);
+                    
+                    // Célula acumulado
+                    const accumCell = document.createElement('td');
+                    accumCell.textContent = rowData['Acumulado'];
+                    accumCell.className = 'hht-value-cell';
+                    row.appendChild(accumCell);
+                    
+                    // Células semanais (apenas as primeiras 17 semanas para o gráfico)
+                    const weeklyData = rowData['weekly'] || [];
+                    for (let i = 0; i < 17; i++) {
+                        const weekCell = document.createElement('td');
+                        weekCell.textContent = weeklyData[i] || '0';
+                        
+                        // Aplicar classes CSS baseadas no valor
+                        const value = parseFloat(weeklyData[i]) || 0;
+                        if (value === 0) {
+                            weekCell.className = 'zero-value';
+                        } else if (value > 0) {
+                            weekCell.className = 'positive-value';
+                        }
+                        
+                        // Destacar semana selecionada
+                        if (i === weekConfig[selectedWeek].index) {
+                            weekCell.classList.add('current-week');
+                        }
+                        
+                        row.appendChild(weekCell);
+                    }
+                    
+                    tableBody.appendChild(row);
+                }
+            });
+        }
+        
+        function updateHHTChart(hhtData) {
+            if (!hhtWeeklyChart) {
+                // Inicializar gráfico se não existir
+                const hhtCtx = document.getElementById('hhtWeeklyChart').getContext('2d');
+                hhtWeeklyChart = new Chart(hhtCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['S.01', 'S.02', 'S.03', 'S.04', 'S.05', 'S.06', 'S.07', 'S.08', 'S.09', 'S.10', 'S.11', 'S.12', 'S.13', 'S.14', 'S.15', 'S.16', 'S.17'],
+                        datasets: [{
+                            label: 'HHT Semanal (x1000)',
+                            data: [],
+                            backgroundColor: ['#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#e74c3c', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db'],
+                            borderColor: '#2980b9',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Homens-Hora (x1000)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Atualizar dados do gráfico
+            if (hhtData['Hht(x1000)'] && hhtData['Hht(x1000)']['weekly']) {
+                const weeklyData = hhtData['Hht(x1000)']['weekly'].slice(0, 17).map(val => parseFloat(val) || 0);
+                hhtWeeklyChart.data.datasets[0].data = weeklyData;
+                hhtWeeklyChart.update();
+            }
+        }
+        
+        function updateIncidentsChart(hhtData) {
+            if (!incidentsDistributionChart) {
+                // Inicializar gráfico se não existir
+                const ctx = document.getElementById('incidentsDistributionChart').getContext('2d');
+                incidentsDistributionChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['CAF', 'SAF', 'OSA', 'Ambiental', 'Desvios'],
+                        datasets: [{
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: [
+                                '#e74c3c',
+                                '#f39c12',
+                                '#3498db',
+                                '#27ae60',
+                                '#9b59b6'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Atualizar dados do gráfico
+            if (hhtData) {
+                const caf = parseInt(hhtData['CAF - Acidentes Com Afastamentos'] ? hhtData['CAF - Acidentes Com Afastamentos']['Acumulado'] : 0);
+                const saf = parseInt(hhtData['SAF - Acidentes Sem Afastamentos'] ? hhtData['SAF - Acidentes Sem Afastamentos']['Acumulado'] : 0);
+                const osa = parseInt(hhtData['OSA - Ocorrência de Simples Atendimento'] ? hhtData['OSA - Ocorrência de Simples Atendimento']['Acumulado'] : 0);
+                const ambiental = parseInt(hhtData['Ocorrência Ambiental'] ? hhtData['Ocorrência Ambiental']['Acumulado'] : 0);
+                const desvios = parseInt(hhtData['Desvios'] ? hhtData['Desvios']['Acumulado'] : 0);
+                
+                incidentsDistributionChart.data.datasets[0].data = [caf, saf, osa, ambiental, desvios];
+                incidentsDistributionChart.update();
+            }
+        }
+        
+        function updateMOComparisonChart(histogramData) {
+            if (!moComparisonChart) {
+                const ctx = document.getElementById('moComparisonChart').getContext('2d');
+                moComparisonChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['S.01', 'S.02', 'S.03', 'S.04', 'S.05', 'S.06', 'S.07', 'S.08', 'S.09', 'S.10', 'S.11', 'S.12', 'S.13', 'S.14', 'S.15', 'S.16', 'S.17'],
+                        datasets: [
+                            {
+                                label: 'MO Previsto',
+                                data: [],
+                                backgroundColor: ['#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#e74c3c', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db'],
+                                borderColor: '#2980b9',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'MO Real',
+                                data: [],
+                                backgroundColor: ['#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#d35400', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71'],
+                                borderColor: '#27ae60',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Quantidade de Pessoal'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Atualizar dados do gráfico
+            if (histogramData['MO Total']) {
+                const previstoData = histogramData['MO Total']['Previsto'].slice(0, 17).map(val => parseInt(val) || 0);
+                const realData = histogramData['MO Total']['Real'].slice(0, 17).map(val => parseInt(val) || 0);
+                
+                moComparisonChart.data.datasets[0].data = previstoData;
+                moComparisonChart.data.datasets[1].data = realData;
+                moComparisonChart.update();
+            }
+        }
+        
+        function initializeCharts() {
+            // Inicializar gráfico HHT
+            const hhtCtx = document.getElementById('hhtWeeklyChart')?.getContext('2d');
+            if (hhtCtx) {
+                hhtWeeklyChart = new Chart(hhtCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['S.01', 'S.02', 'S.03', 'S.04', 'S.05', 'S.06', 'S.07', 'S.08', 'S.09', 'S.10', 'S.11', 'S.12', 'S.13', 'S.14', 'S.15', 'S.16', 'S.17'],
+                        datasets: [{
+                            label: 'HHT Semanal (x1000)',
+                            data: [132, 44, 44, 44, 220, 88, 396, 396, 396, 396, 396, 396, 0, 0, 0, 0, 0],
+                            backgroundColor: ['#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#e74c3c', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db'],
+                            borderColor: '#2980b9',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Homens-Hora (x1000)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Inicializar gráfico de distribuição de incidentes
+            const incidentsCtx = document.getElementById('incidentsDistributionChart')?.getContext('2d');
+            if (incidentsCtx) {
+                incidentsDistributionChart = new Chart(incidentsCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['CAF', 'SAF', 'OSA', 'Ambiental', 'Desvios'],
+                        datasets: [{
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: [
+                                '#e74c3c',
+                                '#f39c12',
+                                '#3498db',
+                                '#27ae60',
+                                '#9b59b6'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Inicializar gráfico de comparação MO
+            const moCtx = document.getElementById('moComparisonChart')?.getContext('2d');
+            if (moCtx) {
+                moComparisonChart = new Chart(moCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['S.01', 'S.02', 'S.03', 'S.04', 'S.05', 'S.06', 'S.07', 'S.08', 'S.09', 'S.10', 'S.11', 'S.12', 'S.13', 'S.14', 'S.15', 'S.16', 'S.17'],
+                        datasets: [
+                            {
+                                label: 'MO Previsto',
+                                data: [3, 1, 1, 1, 1, 7, 8, 10, 10, 10, 9, 8, 6, 6, 6, 3, 6],
+                                backgroundColor: ['#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db', '#e74c3c', '#3498db', '#3498db', '#3498db', '#3498db', '#3498db'],
+                                borderColor: '#2980b9',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'MO Real',
+                                data: [3, 1, 1, 1, 2, 2, 6, 6, 6, 6, 6, 6, 6, 0, 0, 0, 0],
+                                backgroundColor: ['#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#d35400', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71', '#2ecc71'],
+                                borderColor: '#27ae60',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Quantidade de Pessoal'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Funções para upload de CSV
+        function handleFileSelect(file, type) {
+            // Verificar se é um arquivo CSV
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showStatus(type, 'Por favor, selecione um arquivo CSV.', 'error');
+                return;
+            }
+            
+            // Atualizar interface com informações do arquivo
+            const fileName = document.getElementById(`fileName${type}`);
+            const fileSize = document.getElementById(`fileSize${type}`);
+            const selectedFileDiv = document.getElementById(`selectedFile${type}`);
+            const uploadButton = document.getElementById(`uploadButton${type}`);
+            
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            selectedFileDiv.style.display = 'flex';
+            uploadButton.disabled = false;
+            
+            // Armazenar o arquivo em um data attribute para uso posterior
+            selectedFileDiv.dataset.file = file.name;
+            
+            // Ler e pré-visualizar o CSV
+            readCSV(file, type);
+        }
+        
+        function readCSV(file, type) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csvContent = e.target.result;
+                previewCSV(csvContent, type);
+            };
+            reader.readAsText(file);
+        }
+        
+        function previewCSV(csvContent, type) {
+            const lines = csvContent.split('\n');
+            const previewDiv = document.getElementById(`csvPreview${type}`);
+            
+            if (lines.length === 0) {
+                previewDiv.innerHTML = '<p>Arquivo CSV vazio.</p>';
+                return;
+            }
+            
+            // Criar tabela HTML
+            let tableHTML = '<table class="csv-table">';
+            
+            // Processar cabeçalhos - verificar se é separado por vírgula ou ponto e vírgula
+            const firstLine = lines[0];
+            let headers;
+            
+            if (firstLine.includes(';') && firstLine.includes(',')) {
+                // Se tiver ambos, verificar qual tem mais ocorrências
+                const semicolonCount = (firstLine.match(/;/g) || []).length;
+                const commaCount = (firstLine.match(/,/g) || []).length;
+                headers = semicolonCount > commaCount ? firstLine.split(';') : firstLine.split(',');
+            } else if (firstLine.includes(';')) {
+                headers = firstLine.split(';');
+            } else {
+                headers = firstLine.split(',');
+            }
+            
+            tableHTML += '<thead><tr>';
+            headers.forEach(header => {
+                tableHTML += `<th>${header.trim()}</th>`;
+            });
+            tableHTML += '</tr></thead>';
+            
+            // Processar linhas de dados (limitar a 10 linhas para pré-visualização)
+            tableHTML += '<tbody>';
+            const maxRows = Math.min(10, lines.length - 1);
+            for (let i = 1; i <= maxRows; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                let cells;
+                if (lines[i].includes(';') && lines[i].includes(',')) {
+                    const semicolonCount = (lines[i].match(/;/g) || []).length;
+                    const commaCount = (lines[i].match(/,/g) || []).length;
+                    cells = semicolonCount > commaCount ? lines[i].split(';') : lines[i].split(',');
+                } else if (lines[i].includes(';')) {
+                    cells = lines[i].split(';');
+                } else {
+                    cells = lines[i].split(',');
+                }
+                
+                tableHTML += '<tr>';
+                cells.forEach(cell => {
+                    tableHTML += `<td>${cell.trim()}</td>`;
+                });
+                tableHTML += '</tr>';
+            }
+            tableHTML += '</tbody></table>';
+            
+            if (lines.length - 1 > maxRows) {
+                tableHTML += `<p style="padding: 10px; text-align: center; color: var(--gray-color);">
+                    ... e mais ${lines.length - 1 - maxRows} linhas
+                </p>`;
+            }
+            
+            previewDiv.innerHTML = tableHTML;
+            previewDiv.style.display = 'block';
+        }
+        
+        function uploadCSV(type) {
+            const fileInput = document.getElementById(`fileInput${type}`);
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showStatus(type, 'Nenhum arquivo selecionado.', 'error');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const csvContent = e.target.result;
+                    let data;
+                    
+                    if (type === 'Security') {
+                        data = parseHHTCSV(csvContent);
+                        csvData.hht = data;
+                    } else if (type === 'Histogram') {
+                        data = parseHistogramCSV(csvContent);
+                        csvData.histogram = data;
+                    }
+                    
+                    showStatus(type, `Dados carregados com sucesso! Clique em "Atualizar Todos os Gráficos" para aplicar.`, 'success');
+                    
+                } catch (error) {
+                    showStatus(type, `Erro ao processar o arquivo: ${error.message}`, 'error');
+                }
+            };
+            
+            reader.onerror = function() {
+                showStatus(type, 'Erro ao ler o arquivo.', 'error');
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        function parseHHTCSV(csvContent) {
+            const lines = csvContent.split('\n').filter(line => line.trim() !== '');
+            
+            if (lines.length < 2) {
+                throw new Error('Arquivo CSV deve ter pelo menos uma linha de cabeçalho e uma linha de dados');
+            }
+            
+            // Processar cabeçalho - verificar separador
+            const firstLine = lines[0];
+            let headers;
+            
+            if (firstLine.includes(';')) {
+                headers = firstLine.split(';').map(h => h.trim());
+            } else {
+                headers = firstLine.split(',').map(h => h.trim());
+            }
+            
+            // Verificar se temos o formato correto
+            if (headers.length < 3) {
+                throw new Error('Formato de CSV inválido para dados HHT. Esperado: Descritivo;Semana Atual;Acumulado;datas...');
+            }
+            
+            const hhtData = {};
+            
+            // Processar cada linha de dados
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                let values;
+                if (lines[i].includes(';')) {
+                    values = lines[i].split(';');
+                } else {
+                    values = lines[i].split(',');
+                }
+                
+                const descritivo = values[0].trim();
+                
+                if (descritivo) {
+                    hhtData[descritivo] = {
+                        'Semana Atual': values[1] ? values[1].trim() : '0',
+                        'Acumulado': values[2] ? values[2].trim() : '0',
+                        'weekly': values.slice(3).map(val => val ? val.trim() : '0')
+                    };
+                }
+            }
+            
+            return hhtData;
+        }
+        
+        function parseHistogramCSV(csvContent) {
+            const lines = csvContent.split('\n').filter(line => line.trim() !== '');
+            
+            if (lines.length < 2) {
+                throw new Error('Arquivo CSV deve ter pelo menos uma linha de cabeçalho e uma linha de dados');
+            }
+            
+            // Processar cabeçalho
+            const firstLine = lines[0];
+            let headers;
+            
+            if (firstLine.includes(',')) {
+                headers = firstLine.split(',').map(h => h.trim());
+            } else {
+                headers = firstLine.split(';').map(h => h.trim());
+            }
+            
+            const data = {};
+            let currentDiscipline = '';
+            
+            // Processar cada linha de dados
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                let values;
+                if (lines[i].includes(',')) {
+                    values = lines[i].split(',');
+                } else {
+                    values = lines[i].split(';');
+                }
+                
+                const disciplina = values[0].trim();
+                const periodo = values[1].trim();
+                
+                if (disciplina && disciplina !== '') {
+                    currentDiscipline = disciplina;
+                    
+                    if (!data[currentDiscipline]) {
+                        data[currentDiscipline] = {};
+                    }
+                }
+                
+                if (currentDiscipline && periodo && (periodo === 'Previsto' || periodo === 'Real')) {
+                    data[currentDiscipline][periodo] = values.slice(3).map(val => val ? val.trim() : '0');
+                }
+            }
+            
+            return data;
+        }
+        
+        function updateAllCharts() {
+            // Verificar se os dados foram carregados
+            if (!csvData.hht && !csvData.histogram) {
+                alert('Por favor, carregue arquivos CSV antes de atualizar os gráficos.');
+                return;
+            }
+            
+            try {
+                // Atualizar todos os dados do dashboard
+                if (csvData.hht) {
+                    updateAllDataFromCSV(csvData.hht);
+                }
+                
+                if (csvData.histogram) {
+                    updateMOComparisonChart(csvData.histogram);
+                }
+                
+                alert('✅ Todos os gráficos foram atualizados com sucesso!');
+                
+            } catch (error) {
+                alert(`❌ Erro ao atualizar gráficos: ${error.message}`);
+            }
+        }
+        
+        // Funções auxiliares
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function showStatus(type, message, statusType) {
+            const statusDiv = document.getElementById(`uploadStatus${type}`);
+            statusDiv.textContent = message;
+            statusDiv.className = `upload-status ${statusType}`;
+            statusDiv.style.display = 'block';
+            
+            // Remover mensagem após 5 segundos
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function removeFile(type) {
+            const fileInput = document.getElementById(`fileInput${type}`);
+            const selectedFileDiv = document.getElementById(`selectedFile${type}`);
+            const uploadButton = document.getElementById(`uploadButton${type}`);
+            const previewDiv = document.getElementById(`csvPreview${type}`);
+            const statusDiv = document.getElementById(`uploadStatus${type}`);
+            
+            fileInput.value = '';
+            selectedFileDiv.style.display = 'none';
+            uploadButton.disabled = true;
+            previewDiv.style.display = 'none';
+            statusDiv.style.display = 'none';
+            
+            // Remover dados correspondentes
+            if (type === 'Security') {
+                csvData.hht = null;
+            } else if (type === 'Histogram') {
+                csvData.histogram = null;
+            }
+        }
+        
+        function clearSection(type) {
+            removeFile(type);
+        }
+        
+        function downloadTemplate(type) {
+            let csvContent = '';
+            let filename = '';
+            
+            csvContent = 'Descritivo;Semana Atual;Acumulado;14/09/2025;21/09/2025;28/09/2025;05/10/2025;12/10/2025;19/10/2025;26/10/2025;02/11/2025;09/11/2025;16/11/2025;23/11/2025;30/11/2025;07/12/2025;14/12/2025;21/12/2025;28/12/2025;04/01/2026;11/01/2026\nHht(x1000);396;2948;132;44;44;44;220;88;396;396;396;396;396;396;0;0;0;0;0;0\nCAF - Acidentes Com Afastamentos;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nSAF - Acidentes Sem Afastamentos;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nOSA - Ocorrência de Simples Atendimento;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nDias sem CAF;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nDias sem SAF;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nOcorrência Ambiental;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nTaxa de Freq. (CAF e SAF);0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nTaxa de Freq. CAF;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nTaxa de Freq. SAF;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0\nDesvios;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0';
+            filename = 'template_hht_seguranca.csv';
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function downloadHistogramTemplate() {
+            const csvContent = `Disciplina,Período,,14/09/2025,21/09/2025,28/09/2025,05/10/2025,12/10/2025,19/10/2025,26/10/2025,02/11/2025,09/11/2025,16/11/2025,23/11/2025,30/11/2025,07/12/2025,14/12/2025,21/12/2025,28/12/2025,04/01/2026,11/01/2026
+MO Total,Previsto,,3,1,1,1,1,7,8,10,10,10,9,8,6,6,6,3,6,3
+MO Total,Real,,3,1,1,1,2,2,6,6,6,6,6,6,6,0,0,0,0,0
+MO Total,Excedente,,,,,,,,,,,,,,,,,,,
+MOI,Previsto,,3,1,1,1,1,4,4,4,4,4,4,4,4,4,4,1,4,1
+MOI,Real,,3,1,1,1,1,1,3,3,3,3,3,3,3,0,0,0,0,0`;
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'template_histograma.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function exportData(format) {
+            alert(`Função de exportação ${format.toUpperCase()} será implementada em breve!`);
+        }
+    </script>
+</body>
+</html>
